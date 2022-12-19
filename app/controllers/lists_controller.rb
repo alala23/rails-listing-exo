@@ -1,29 +1,30 @@
 class ListsController < ApplicationController
-
+  before_action :set_list, only: %i[show destroy]
 
   def index
     @lists = List.all
   end
 
   def show
-    @bookmark = Bookmark.new
-    # @review = Review.new(list: @list)
+    @bookmark = Bookmark.all
+    @review = Review.new(@list[:list])
   end
 
   def new
-    @lists = List.new
+    @list = List.new
   end
 
   def create
-    @lists = List.new(list_params)
+    @list = List.new(list_params)
     if @list.save
-      redirect_to list_path(@list)
+      redirect_to list_path(@list), notice: 'List submitted'
     else
       render :new, status: :unprocessable_entity
     end
   end
 
   def destroy
+    @list = List.find(params[:id])
     @list.destroy
     redirect_to list_path, status: :see_other
   end
